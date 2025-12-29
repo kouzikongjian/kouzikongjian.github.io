@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扣子空间 - Coze AI零代码应用开发平台</title>
+    <meta name="keywords" content="扣子空间,扣子空间网页版,Coze,字节跳动AI,Bot开发平台,AI机器人创建,AI应用开发,Coze网页版入口">
+    <meta name="description" content="扣子空间(Coze)是字节跳动推出的专业AI Bot开发平台，提供可视化Bot编辑器、插件集成、知识库、工作流等强大功能。通过扣子空间网页版入口即可免费创建和部署智能AI机器人，支持一键发布到Discord、飞书、微信群等多平台。">
+    <link rel="shortcut icon" href="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png" />
+    <link rel="preconnect" href="https://cdn.bootcdn.net">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- 内联基础样式 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: rgb(241 245 249);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+        
+        .logo img {
+            height: 40px;
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #0066ff;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            padding: 4rem 0;
+            background: #fff;
+            color: black;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .hero-title-box {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .img-box img {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            padding: 8px;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: #111;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align:left;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .hero-desc {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size:1.5rem;
+            justify-content:center;
+        }
+        
+        .btn-primary {
+            background: #8b3dff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #0066ff;
+            border: 1px solid #0066ff;
+        }
+        
+        .btn-secondary:hover {
+            background: #f0f7ff;
+            transform: translateY(-2px);
+        }
+        
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius:20px;
+            border: 1px solid #e5e7eb;
+            padding: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 功能区域 */
+        .section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1e3c72;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #1e3c72;
+        }
+        
+        .feature-title i {
+            color: #0066ff;
+            margin-right: 0.5rem;
+        }
+        
+        /* 优势区域 */
+        .advantages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .advantage-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+
+        }
+        
+        .advantage-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+        
+        /* FAQ区域 */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faq-toggle {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .faq-toggle:hover {
+            background: #f8f9fa;
+        }
+        
+        .faq-content {
+            padding: 0 1.5rem 1.5rem;
+            display: none;
+            color: #666;
+        }
+        
+        .faq-content.active {
+            display: block;
+        }
+        
+        /* 新闻区域 */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .news-content {
+            padding: 1.5rem;
+        }
+        
+        .news-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+        
+        .news-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0066ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+        
+        .back-to-top.show {
+            display: flex;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background: #fff;
+            color: #555;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .nav-list {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn{
+                width: 100%;
+            }
+        }
+        
+        /* 平台图标样式 */
+        .platform-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .platform-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f0f7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .platform-icon i {
+            color: #0066ff;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="./logo.png" alt="Logo" />
+            </div>
+            <nav class="nav" aria-label="主导航">
+                <ul class="nav-list">
+                    <li><a href="#features" class="nav-link">核心功能</a></li>
+                    <li><a href="#advantages" class="nav-link">平台优势</a></li>
+                    <li><a href="#faq" class="nav-link">常见问题</a></li>
+                    <li><a href="#news" class="nav-link">最新动态</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-title-box">
+                        <div class="img-box">
+                            <img src="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png" alt="扣子空间" />
+                        </div>
+                        <div>
+                            <h1 class="hero-title">扣子空间</h1>
+                            <p class="hero-subtitle">Coze AI智能体开发平台</p>
+                        </div>
+                    </div>
+                    <p class="hero-desc">
+                        无需编程基础，可视化创建专属AI机器人；集成插件、知识库和工作流，一键发布到多平台
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="https://dis.csqixiang.cn/unpo/cozeszzn.html" 
+                           class="btn btn-primary" 
+                           rel="nofollow" 
+                           target="_blank"
+                           aria-label="访问扣子空间网页版">
+                           <i class="fas fa-external-link-alt"></i>扣子空间官网入口
+                        </a>
+
+                    </div>
+
+                </div>
+                <div class="hero-image-container">
+                    <img src="https://s1.wp.com/mshots/v1/https://www.coze.cn" alt="扣子空间" class="hero-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能部分 -->
+        <section id="features" class="section features">
+            <div class="container">
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-robot"></i>
+                            可视化Bot编辑器
+                        </h3>
+                        <p>无需编程经验，通过拖拽式界面创建AI机器人。自定义机器人的性格、回复风格和专业领域，轻松构建符合需求的智能助手。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-plug"></i>
+                            丰富插件生态系统
+                        </h3>
+                        <p>扣子空间内置200+实用插件，支持联网搜索、图像生成、代码执行、数据分析等能力。一键集成第三方API，扩展机器人功能边界。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-database"></i>
+                            知识库与长期记忆
+                        </h3>
+                        <p>上传文档、网页链接或手动录入信息构建专属知识库。机器人可基于知识库提供精准回答，支持PDF、Word、Excel、TXT等多种格式。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-project-diagram"></i>
+                            可视化工作流设计
+                        </h3>
+                        <p>通过流程图式界面设计复杂业务逻辑，支持条件判断、循环、变量操作等高级功能，实现多步骤自动化任务处理。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-share-alt"></i>
+                            多平台一键部署
+                        </h3>
+                        <p>一键将机器人发布到Discord、飞书、微信群、Web网站、API接口等平台。支持自定义机器人外观和交互方式。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-chart-line"></i>
+                            数据监控与分析
+                        </h3>
+                        <p>扣子空间提供详细的机器人使用统计、对话日志和性能分析。监控机器人运行状态，优化对话质量，了解用户交互模式。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 平台优势部分 -->
+        <section id="advantages" class="section advantages">
+            <div class="container">
+                <h2 class="section-title">扣子空间平台优势</h2>
+                <div class="advantages-list">
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">字节跳动强大技术底座</h3>
+                        <p>基于字节跳动先进的AI模型和技术积累，扣子空间集成了最前沿的自然语言处理和多模态能力，确保机器人智能水平行业领先。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">完全免费使用</h3>
+                        <p>扣子空间基础功能完全免费，个人用户和中小团队可无限制创建和部署AI机器人。高级功能提供灵活的付费方案，性价比极高。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">中文场景深度优化</h3>
+                        <p>专为中文用户设计，深度理解中文语境和文化背景。提供丰富的本土化插件和模板，更适合中国开发者使用。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">低代码快速开发</h3>
+                        <p>可视化开发界面大幅降低AI应用开发门槛，非技术人员也能在几分钟内创建功能完整的AI机器人，加速企业智能化转型。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">企业级安全与合规</h3>
+                        <p>提供数据加密、访问控制、审计日志等企业级安全功能。符合中国数据安全法规要求，支持私有化部署选项。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">活跃的开发者社区</h3>
+                        <p>拥有丰富的教程、模板和案例库，活跃的开发者社区共享插件和最佳实践，帮助用户快速上手并解决开发难题。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ部分 -->
+        <section id="faq" class="section faq">
+            <div class="container">
+                <h2 class="section-title">常见问题解答</h2>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq1-content">
+                            <span>扣子空间是完全免费的吗？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq1-content">
+                            <p>是的，扣子空间基础功能完全免费开放。个人用户和中小团队可以免费创建和部署AI机器人，享受大部分核心功能。对于需要更高调用量、专属支持或企业级功能的用户，扣子空间也提供了付费升级方案。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq2-content">
+                            <span>没有编程基础能使用扣子空间吗？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq2-content">
+                            <p>完全可以！扣子空间采用可视化开发界面，通过拖拽和配置即可创建AI机器人，无需编写代码。平台提供了丰富的模板和引导教程，帮助非技术用户快速上手。同时，对于开发者用户，扣子空间也支持API调用和代码级自定义。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq3-content">
+                            <span>扣子空间支持哪些发布平台？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq3-content">
+                            <p>扣子空间支持将机器人一键发布到多个平台：Discord、飞书、微信公众号、企业微信、Web网站（通过嵌入代码）、API接口等。未来还将支持更多国内外主流通讯和协作平台，满足不同场景的部署需求。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq4-content">
+                            <span>扣子空间与豆包有什么区别？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq4-content">
+                            <p>豆包是面向终端用户的AI助手产品，而扣子空间是面向开发者和企业的AI Bot开发平台。简单来说，豆包是"用AI"，扣子空间是"造AI"。通过扣子空间，用户可以创建类似豆包的定制化AI助手，但具有更专精的领域知识和个性化功能。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq5-content">
+                            <span>如何保证扣子空间机器人的数据安全？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq5-content">
+                            <p>扣子空间采用多重安全措施：1) 数据传输全程加密；2) 支持知识库内容脱敏处理；3) 提供访问权限控制；4) 符合中国数据安全法规要求。对于企业用户，还支持私有化部署方案，确保数据完全自主控制。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最新动态部分 -->
+        <section id="news" class="section news">
+            <div class="container">
+                <h2 class="section-title">扣子空间最新动态</h2>
+                <div class="news-grid">
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间推出多模态增强版，支持图像和语音交互</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-12-10">2025年12月10日</time>
+                            </div>
+                            <p>扣子空间最新版本支持图像识别、生成和语音交互功能，开发者可以创建能够"看"和"听"的AI机器人，拓展了视觉和语音AI应用场景。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间企业版正式发布，支持私有化部署</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-11-25">2025年11月25日</time>
+                            </div>
+                            <p>扣子空间企业版提供私有化部署方案，支持企业内部数据源集成和定制化开发，满足金融、医疗等对数据安全要求高的行业需求。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间插件市场突破500个插件</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-10-18">2025年10月18日</time>
+                            </div>
+                            <p>扣子空间插件市场迎来里程碑，可用插件数量突破500个，涵盖电商、客服、教育、娱乐等各个领域，大幅扩展了AI机器人的能力边界。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间与多所高校合作推出AI教育计划</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-09-30">2025年9月30日</time>
+                            </div>
+                            <p>扣子空间与清华大学、浙江大学等多所高校合作，推出AI应用开发课程和实验室，培养下一代AI开发人才，推动AI技术普及。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间全球用户突破200万</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-08-15">2025年8月15日</time>
+                            </div>
+                            <p>扣子空间全球注册开发者数量突破200万，覆盖150多个国家和地区，成为全球增长最快的AI开发平台之一。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">扣子空间推出协作开发功能</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-07-22">2025年7月22日</time>
+                            </div>
+                            <p>新版本支持团队协作开发，多人可同时编辑同一机器人项目，实时查看更改，提升企业团队开发效率和项目管理能力。</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="copyright">
+                <p>扣子空间(Coze) - 字节跳动AI智能体开发平台</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">&copy; kouzikongjian.github.io</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ交互功能
+        document.querySelectorAll('.faq-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.nextElementSibling;
+                const icon = toggle.querySelector('i');
+                
+                content.classList.toggle('active');
+                if (content.classList.contains('active')) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0)';
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.createElement('button');
+        backToTopBtn.className = 'back-to-top';
+        backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        document.body.appendChild(backToTopBtn);
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
