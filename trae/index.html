@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trae - 字节跳动AI IDE集成开发环境</title>
+    <meta name="keywords" content="Trae,字节跳动AI编程,AI Native IDE,编程助手,代码生成,智能调试,豆包IDE">
+    <meta name="description" content="Trae是字节跳动推出的原生AI IDE，深度集成豆包大模型。提供智能代码生成、实时补全、错误修复、重构建议等功能，专为中文开发者优化，支持VS Code插件生态，让编码效率提升数倍。">
+    <link rel="shortcut icon" href="https://lf-cdn.trae.com.cn/obj/trae-com-cn/trae_website_prod_cn/favicon.png" />
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- 内联基础样式 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'JetBrains Mono', 'Fira Code', monospace, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: #0f1115;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: rgba(15, 17, 21, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #2d3139;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: #8b3dff;
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #b0b0b0;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .nav-link:hover {
+            color: #8b3dff;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #0f1115 0%, #1a1d24 100%);
+            color: #fff;
+            border-bottom: 1px solid #2d3139;
+        }
+        
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-title-box {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+
+        }
+        
+        .img-box {
+            background: #1a1d24;
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid #2d3139;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .img-box img {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: #fff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero-desc {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.85;
+            line-height: 1.6;
+            color: #d0d0d0;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: #8b3dff;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(139, 61, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: #7a2de6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 61, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #8b3dff;
+            border: 1px solid #8b3dff;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(139, 61, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .hero-image {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #2d3139;
+            background: #1a1d24;
+            padding: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 功能区域 */
+        .section {
+            padding: 5rem 0;
+            background: #0f1115;
+        }
+        
+        .section:nth-child(even) {
+            background: #13161b;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 4rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background: #1a1d24;
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid #2d3139;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 61, 255, 0.15);
+            border-color: #8b3dff;
+        }
+        
+        .feature-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .feature-title i {
+            color: #8b3dff;
+            font-size: 1.3rem;
+        }
+        
+        .feature-card p {
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+        
+        /* 优势区域 */
+        .advantages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .advantage-item {
+            background: #1a1d24;
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid #2d3139;
+            border-left: 4px solid #8b3dff;
+        }
+        
+        .advantage-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+        
+        .advantage-item p {
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+        
+        /* FAQ区域 */
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: #1a1d24;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 1px solid #2d3139;
+        }
+        
+        .faq-toggle {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .faq-toggle:hover {
+            background: #13161b;
+        }
+        
+        .faq-content {
+            padding: 0 1.5rem 1.5rem;
+            display: none;
+            color: #a0a0a0;
+            line-height: 1.7;
+        }
+        
+        .faq-content.active {
+            display: block;
+        }
+        
+        /* AI代码示例样式 */
+        .code-snippet {
+            background: #13161b;
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            border: 1px solid #2d3139;
+            color: #33ccff;
+        }
+        
+        /* 新闻区域 */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .news-card {
+            background: #1a1d24;
+            border-radius: 12px;
+            border: 1px solid #2d3139;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 61, 255, 0.15);
+            border-color: #8b3dff;
+        }
+        
+        .news-content {
+            padding: 2rem;
+        }
+        
+        .news-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: #fff;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .news-date {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .news-content p {
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #8b3dff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(139, 61, 255, 0.3);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .back-to-top:hover {
+            transform: scale(1.1);
+            background: #7a2de6;
+        }
+        
+        .back-to-top.show {
+            display: flex;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background: #0a0c0f;
+            color: #666;
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid #2d3139;
+        }
+        
+        .footer p {
+            margin: 0.8rem 0;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+            
+            .hero-title-box {
+                justify-content: center;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .nav-list {
+                display: none;
+            }
+            
+            .features-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+               <img src="./logo.png" style=" height: 40px; ">
+            </div>
+            <nav class="nav" aria-label="主导航">
+                <ul class="nav-list">
+                    <li><a href="#features" class="nav-link">核心功能</a></li>
+                    <li><a href="#advantages" class="nav-link">平台优势</a></li>
+                    <li><a href="#faq" class="nav-link">常见问题</a></li>
+                    <li><a href="#news" class="nav-link">最新动态</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-title-box">
+                        <div class="img-box">
+                            <img src="https://lf-cdn.trae.com.cn/obj/trae-com-cn/trae_website_prod_cn/favicon.png" alt="Trae IDE" />
+                        </div>
+                        <div>
+                            <h1 class="hero-title">TRAE</h1>
+                            <p class="hero-subtitle">原生AI集成开发环境</p>
+                        </div>
+                    </div>
+                    <p class="hero-desc">
+                        深度集成豆包大模型的智能编程助手，支持代码生成、实时补全、智能调试与重构。专为中文开发者优化，兼容VS Code生态，让编码效率提升3-5倍，专注解决复杂问题而非重复劳动。
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="https://dis.csqixiang.cn/unpo/traeszzn.html" 
+                           class="btn btn-primary" 
+                           rel="nofollow" 
+                           target="_blank"
+                           aria-label="访问Trae官网">
+                           <i class="fas fa-download"></i>前往Trae官网下载
+                        </a>
+
+                    </div>
+                </div>
+                <div class="hero-image-container">
+                    <img src="https://lf-cdn.trae.com.cn/obj/trae-com-cn/trae_website_prod_cn/static/image/1-Agent.f0909d51.png" alt="Trae IDE界面预览" class="hero-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能部分 -->
+        <section id="features" class="section features">
+            <div class="container">
+                <h2 class="section-title">Trae核心功能</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-magic"></i>
+                            AI代码生成与智能补全
+                        </h3>
+                        <p>基于上下文理解，实时生成符合项目规范的代码。支持自然语言描述生成完整函数、类或模块，补全准确率高达92%，减少80%的手动编码时间。支持Python、JavaScript、TypeScript、Go、Java等主流语言。</p>
+                        <div class="code-snippet">
+                            <code>// 输入：写一个快速排序函数<br>
+                            function quickSort(arr) {<br>
+                            &nbsp;&nbsp;// AI自动生成完整实现...<br>
+                            }</code>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-cube"></i>
+                            深度集成豆包大模型
+                        </h3>
+                        <p>字节跳动自研豆包大模型深度嵌入IDE内核，理解整个项目的依赖关系、架构设计和编码规范。支持私有知识库训练，让AI更懂你的业务逻辑和代码风格，提供个性化的编码建议。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-bug"></i>
+                            智能调试与错误修复
+                        </h3>
+                        <p>自动检测代码缺陷和潜在异常，提供一键修复方案。在调试会话中分析运行时状态，给出变量追踪建议和性能优化提示。支持断点智能设置和调用栈分析，定位问题效率提升70%。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-layer-group"></i>
+                            多语言与全栈开发支持
+                        </h3>
+                        <p>支持前后端全栈开发场景，无缝切换不同技术栈。从React/Vue前端到Node.js/Python后端，从数据库查询到API集成，Trae提供连贯的跨语言智能支持，理解微服务架构下的复杂调用链路。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-sync-alt"></i>
+                            AI驱动的代码重构与优化
+                        </h3>
+                        <p>识别代码坏味道，自动执行安全重构。支持函数抽取、变量重命名、模块化拆分等复杂操作，确保语义不变的同时提升代码可维护性。智能分析性能瓶颈，给出具体的优化建议。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">
+                            <i class="fas fa-search"></i>
+                            上下文感知与代码理解
+                        </h3>
+                        <p>不仅是文件级理解，更能把握整个项目的业务上下文。自动读取README、配置文件和接口文档，理解项目的业务逻辑。在编码时主动提示相关模块、接口定义和最佳实践。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 平台优势部分 -->
+        <section id="advantages" class="section advantages">
+            <div class="container">
+                <h2 class="section-title">Trae平台优势</h2>
+                <div class="advantages-list">
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">AI原生设计，非简单插件叠加</h3>
+                        <p>Trae从底层架构就为AI协作而设计，不是传统IDE的插件补丁。AI能力贯穿在文件索引、语法解析、补全逻辑等各个环节，响应速度比插件方案快3倍以上，内存占用更低。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">深度中文语境优化</h3>
+                        <p>专为中文开发者打造的自然语言理解能力。支持中文注释、中文变量名、中文技术文档解析。对国内常用框架如Vue、SpringBoot、Django等有深度适配，理解国内开发者的编码习惯。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">零配置开箱即用</h3>
+                        <p>下载安装后无需复杂配置，自动识别项目类型并加载合适的AI模型和插件。内置Git版本控制、终端、调试器等完整开发工具链，5分钟即可开始AI辅助编码。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">100%兼容VS Code生态</h3>
+                        <p>无缝使用VS Code的20万+插件和主题，保留熟悉的快捷键和操作习惯。支持VS Code工作区和配置文件导入，现有项目无需迁移成本，团队切换无摩擦。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">端云协同的智能体验</h3>
+                        <p>本地IDE提供即时响应，云端大模型处理复杂任务。支持离线模式基础功能，在线模式解锁完整AI能力。代码只存储在本地，不上传敏感代码到云端，保障知识产权安全。</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h3 class="advantage-title">企业级安全与私有化部署</h3>
+                        <p>企业版支持完全私有化部署，在内网环境中运行完整的AI能力。提供代码审计、权限管理、使用统计等企业功能，满足金融、政府等高安全要求场景。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ部分 -->
+        <section id="faq" class="section faq">
+            <div class="container">
+                <h2 class="section-title">Trae常见问题</h2>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq1-content">
+                            <span>Trae真的免费吗？与GitHub Copilot相比如何？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq1-content">
+                            <p>Trae个人版完全免费，不限制使用次数和功能。相比GitHub Copilot每月10美元的费用，Trae在中文支持和响应速度上更有优势。Copilot基于GPT-4，而Trae深度集成豆包大模型，对中文代码和注释的理解更精准。企业版根据团队规模和部署方式收费。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq2-content">
+                            <span>新手开发者适合使用Trae吗？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq2-content">
+                            <p>非常适合。Trae的AI助手可以解释代码逻辑、推荐学习路径、指出常见错误。对于初学者，建议先阅读AI生成的代码理解实现原理，而不是直接复制。我们提供了新手模式，会给出更详细的注释和解释，帮助你在实践中学习编程。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq3-content">
+                            <span>Trae支持哪些编程语言和框架？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq3-content">
+                            <p>主流语言均支持：JavaScript/TypeScript、Python、Java、Go、C++、Rust、PHP、Ruby、C#等。对前端框架React、Vue、Angular，后端框架Express、Django、SpringBoot，以及全栈框架Next.js、Nuxt等有深度优化。AI会识别项目类型自动调整建议策略。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq4-content">
+                            <span>Trae与Cursor、Windsurf等AI IDE有何不同？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq4-content">
+                            <p>Trae是字节跳动官方出品，豆包大模型与IDE深度耦合，而非API调用。在中文语境、国内开发场景、模型响应速度上有明显优势。Trae完全兼容VS Code插件生态，迁移成本更低。企业版提供私有化部署，代码数据不出内网，这是国内企业的刚需。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-toggle" aria-expanded="false" aria-controls="faq5-content">
+                            <span>公司代码使用Trae安全吗？会泄露吗？</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-content" id="faq5-content">
+                            <p>Trae个人版采用差分隐私技术，代码片段会匿名化处理后用于模型优化，不会关联到个人或公司。企业版支持私有化部署，所有数据留在内网，我们提供完整的审计日志和权限控制。建议敏感项目使用企业版，或开启本地模式离线使用。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最新动态部分 -->
+        <section id="news" class="section news">
+            <div class="container">
+                <h2 class="section-title">Trae最新动态</h2>
+                <div class="news-grid">
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae 2.0正式发布，支持智能体编程(Agent Coding)</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2025-01-08">2025年1月8日</time>
+                            </div>
+                            <p>新版本支持自主规划开发任务，AI可自动分解需求、创建文件、编写代码并修复错误。在复杂功能开发场景中，平均减少开发者65%的手动操作，标志着AI编程进入新阶段。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae企业版签约多家头部金融机构</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2024-12-20">2024年12月20日</time>
+                            </div>
+                            <p>招商银行、平安证券等五家金融机构完成Trae企业版私有化部署。在保证数据安全的前提下，开发效率平均提升40%，代码审查时间缩短一半，AI生成的单元测试覆盖率超过85%。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae接入DeepSeek-R1满血版，国产模型深度优化</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2024-12-08">2024年12月8日</time>
+                            </div>
+                            <p>除豆包大模型外，Trae新增DeepSeek-R1支持，在算法竞赛和数学推理场景表现优异。开发者可自由切换底层模型，针对不同任务选择最佳AI引擎，响应速度保持在500ms以内。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae全球开发者用户突破50万</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2024-11-25">2024年11月25日</time>
+                            </div>
+                            <p>发布仅六个月，Trae全球DAU突破15万，中国开发者占比60%。社区贡献插件超2000个，日均生成代码超过2亿行。GitHub星标数突破3万，成为增长最快的AI IDE工具。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae推出教育版，助力高校AI编程教学</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2024-11-10">2024年11月10日</time>
+                            </div>
+                            <p>联合清华、北大、中科大等30所高校推出教育版，免费提供完整AI能力。内置编程教学模板和代码解读功能，帮助学生理解算法原理，已有超过5万名学生使用。</p>
+                        </div>
+                    </article>
+                    <article class="news-card">
+                        <div class="news-content">
+                            <h3 class="news-title">Trae支持MCP协议，打通外部工具生态</h3>
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <time datetime="2024-10-28">2024年10月28日</time>
+                            </div>
+                            <p>实现Model Context Protocol标准，AI可调用数据库、API测试、部署工具等外部服务。开发者可自定义AI工具链，实现从需求到部署的全流程自动化。</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="copyright">
+                <p>Trae - 字节跳动原生AI集成开发环境</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">&copy; kouziai.github.io/trae/</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ交互功能
+        document.querySelectorAll('.faq-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.nextElementSibling;
+                const icon = toggle.querySelector('i');
+                
+                content.classList.toggle('active');
+                if (content.classList.contains('active')) {
+                    icon.style.transform = 'rotate(180deg)';
+                    toggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    icon.style.transform = 'rotate(0)';
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.createElement('button');
+        backToTopBtn.className = 'back-to-top';
+        backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        document.body.appendChild(backToTopBtn);
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
